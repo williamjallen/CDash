@@ -7,17 +7,27 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
-class Controller extends BaseController
-{
+abstract class AbstractController extends BaseController {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    protected $cdashCss;
+    protected $user;
+
+    public function __construct() {
+        $this->cdashCss = asset(get_css_file());
+
+        // Get the current user, if applicable.
+        $this->user = [
+            'id' => \Auth::id()
+        ];
+    }
 
     /**
      * Returns the version used to find compiled css and javascript files
      *
      * @return string
      */
-    public static function getJsVersion()
-    {
+    public static function getJsVersion() {
         $path = config('cdash.file.path.js.version');
         $version = '';
         if (is_readable($path)) {
@@ -27,5 +37,10 @@ class Controller extends BaseController
             }
         }
         return $version;
+    }
+
+    protected function redirectToLogin() {
+        session(['url.intended' => url()->current()]);
+        return redirect()->route('login');
     }
 }

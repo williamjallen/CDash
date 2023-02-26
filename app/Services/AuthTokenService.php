@@ -8,6 +8,7 @@ use App\Models\AuthToken;
 use App\Models\User;
 use CDash\Model\Project;
 use CDash\Model\UserProject;
+use Illuminate\Database\Eloquent\Collection;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -190,8 +191,20 @@ class AuthTokenService
             ->get();
     }
 
-    public static function hashToken(?string $unhashed_token): string
+    /**
+     * Contract: we assume that the user has already been validated and blindly return a list of
+     * all auth tokens.  It is your responsibility as a user of this method to ensure that only
+     * administrators can access it.
+     */
+    public static function getAllTokens(): Collection
     {
+        return AuthToken::select('authtoken.*', 'project.name AS projectname', 'user.firstname AS owner_firstname', 'user.lastname AS owner_lastname')
+            ->leftJoin('project', 'project.id', '=', 'authtoken.projectid')
+            ->leftJoin('user', 'user.id', '=', 'authtoken.userid')
+            ->get();
+    }
+
+    public static function hashToken(?string $unhashed_token): string {
         if ($unhashed_token === null || $unhashed_token === '') {
             return '';
         }

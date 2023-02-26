@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use CDash\Model\Image;
 use Illuminate\Http\Request;
 
-class ImageController extends Controller
+class ImageController extends AbstractController
 {
     public function image(Image $image)
     {

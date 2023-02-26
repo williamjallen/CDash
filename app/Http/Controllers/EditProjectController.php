@@ -1,11 +1,11 @@
 <?php
-namespace App\Http\Controllers\Views;
+namespace App\Http\Controllers;
 
 require_once 'include/common.php';
 require_once 'include/defines.php';
 
-use CDash\Model\Project;
 use App\Services\ProjectPermissions;
+use CDash\Model\Project;
 
 class EditProjectController extends ProjectController
 {
@@ -22,7 +22,6 @@ class EditProjectController extends ProjectController
             $this->project = new Project();
             $this->project->Id = $project_id;
         }
-        parent::setup($this->project);
     }
 
     // Render the create project form.

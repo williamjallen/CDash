@@ -1,12 +1,11 @@
 <?php
-namespace App\Http\Controllers\Views;
+namespace App\Http\Controllers;
 
 require_once 'include/common.php';
 require_once 'include/defines.php';
 
 use App\Services\TestingDay;
 use CDash\Model\Build;
-use CDash\Model\Project;
 
 class BuildController extends ProjectController
 {
