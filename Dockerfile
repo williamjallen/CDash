@@ -2,8 +2,6 @@
 FROM php:8.1-apache-bookworm AS cdash-common
 LABEL MAINTAINER="Kitware, Inc. <cdash@public.kitware.com>"
 
-ARG CDASH_DB_HOST=localhost
-
 # Designates as dev build, adds testing infrastructure, et al.
 ARG DEVELOPMENT_BUILD
 
@@ -96,10 +94,8 @@ fi
 # Run the rest of the commands as www-data
 USER www-data
 
-WORKDIR /
-
 # Copy CDash (current folder) into /cdash
-COPY --chown=www-data:www-data . ./cdash
+COPY --chown=www-data:www-data . /cdash
 
 WORKDIR /cdash
 
@@ -111,7 +107,6 @@ RUN if [ "$DEVELOPMENT_BUILD" = '1' ]; then                                \
  composer install --no-interaction --no-progress --prefer-dist             \
  && mkdir _build && cd _build                                              \
  && cmake                                                                  \
-  -DCDASH_DB_HOST=$CDASH_DB_HOST                                           \
   -DCDASH_DIR_NAME=                                                        \
   -DCDASH_SERVER=localhost:8080                                            \
   -DCDASH_SELENIUM_HUB=selenium-hub                                        \
@@ -122,40 +117,19 @@ RUN if [ "$DEVELOPMENT_BUILD" = '1' ]; then                                \
 else                                                                       \
  composer install --no-interaction --no-progress --prefer-dist --no-dev    \
                   --optimize-autoloader                                    \
- && npm install --omit=dev                                                 \
- && echo "LOG_CHANNEL=stderr" >> .env;                                     \
+ && npm install --omit=dev;                                                 \
 fi
 
-# Expose CDash config to Laravel
-RUN php artisan config:migrate
-
-RUN if [ "$DEVELOPMENT_BUILD" = '1' ]; then                            \
-  php artisan dependencies:update -D;                                  \
-else                                                                   \
-  php artisan dependencies:update;                                     \
-fi
-
-COPY --chown=www-data:www-data docker/docker-entrypoint.sh /docker-entrypoint.sh
-COPY --chown=www-data:www-data docker/bash /bash-lib
-
-RUN chmod +x /docker-entrypoint.sh
+ENTRYPOINT ["/bin/bash", "/cdash/docker/docker-entrypoint.sh"]
 
 ###############################################################################
 
 FROM cdash-common AS cdash
-LABEL MAINTAINER="Kitware, Inc. <cdash@public.kitware.com>"
 
-WORKDIR /cdash
-
-ENTRYPOINT ["/bin/bash", "/docker-entrypoint.sh"]
-CMD ["install", "serve"]
+CMD ["start-website"]
 
 ###############################################################################
 
 FROM cdash-common AS cdash-worker
-LABEL MAINTAINER="Kitware, Inc. <cdash@public.kitware.com>"
 
-WORKDIR /cdash
-
-ENTRYPOINT ["/bin/bash", "/docker-entrypoint.sh"]
 CMD ["start-worker"]

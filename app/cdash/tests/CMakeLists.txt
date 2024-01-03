@@ -1,8 +1,6 @@
-set(binary_testing_dir "${CDash_BINARY_DIR}/tests")
 set(PHPUNIT "${CDash_SOURCE_DIR}/vendor/bin/phpunit")
 
 # function to add a new PHP based coverage test to CDash
-#
 function(add_php_test TestName)
   add_test(
     NAME ${TestName}
@@ -12,21 +10,32 @@ function(add_php_test TestName)
     ${TestName} PROPERTIES
     FAIL_REGULAR_EXPRESSION ".*Failures: [1-9]+.*;.*Exceptions: [1-9]+.*"
   )
-endfunction(add_php_test)
+endfunction()
 
 function(add_unit_test TestName)
   add_test(
     NAME ${TestName}
-    COMMAND ${PHP_EXE} ${phpunit_extra_arg} ${PHPUNIT} -c ${testing_dir}/phpunit.xml --bootstrap ${testing_dir}/bootstrap.php ${testing_dir}/case/${TestName}Test.php
+    COMMAND
+      ${PHP_EXE}
+      ${phpunit_extra_arg}
+      ${PHPUNIT}
+      -c ${testing_dir}/phpunit.xml
+      --bootstrap ${testing_dir}/bootstrap.php
+      ${testing_dir}/case/${TestName}Test.php
   )
-endfunction(add_unit_test TestName)
+endfunction()
 
 function(add_laravel_test TestName)
   add_test(
     NAME ${TestName}
-    COMMAND ${PHP_EXE} ${phpunit_extra_arg} ${PHPUNIT} -c ${CDash_SOURCE_DIR}/phpunit.xml ${laravel_testing_dir}/${TestName}.php
+    COMMAND
+      ${PHP_EXE}
+      ${phpunit_extra_arg}
+      ${PHPUNIT}
+      -c ${CDash_SOURCE_DIR}/phpunit.xml
+      ${laravel_testing_dir}/${TestName}.php
   )
-endfunction(add_laravel_test TestName)
+endfunction()
 
 # phpunit tests
 set(phpunit_extra_arg "")
@@ -112,7 +121,6 @@ add_php_test(buildgrouprule)
 add_php_test(buildoverview)
 add_php_test(buildusernote)
 add_php_test(committerinfo)
-add_php_test(edituser)
 add_php_test(image)
 add_php_test(displayimage)
 add_cypress_test(banner)
@@ -219,11 +227,15 @@ add_php_test(redundanttests)
 add_php_test(configureappend)
 add_php_test(notesparsererrormessages)
 add_php_test(viewsubprojectslinkoption)
+add_laravel_test(/Feature/SubProjectDependencies)
 
 add_subdirectory(ctest)
 
 add_subdirectory(js/e2e_tests)
 
+# TODO: (sbelsk) We never enable this option. We should reimplement
+#  the useful tests in cypress, clean up the rest, and remove the
+#  references to CDASH_USE_SELENIUM and the `selenium/` directory
 if(CDASH_USE_SELENIUM)
   file(MAKE_DIRECTORY ${CDash_BINARY_DIR}/cmake.git)
   add_subdirectory(selenium)
