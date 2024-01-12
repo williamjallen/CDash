@@ -1,8 +1,5 @@
 <template>
-  <section v-if="errored">
-    <p>{{ cdash.error }}</p>
-  </section>
-  <section v-else-if="!loading">
+  <loading-indicator :is-loading="loading">
     <!-- Message -->
     <table v-if="cdash.message">
       <tr>
@@ -96,82 +93,55 @@
             <td
               align="center"
               bgcolor="#DDDDDD"
+              class="icon-row"
             >
               <a
                 title="Edit subscription"
                 :href="$baseURL + '/subscribeProject.php?projectid=' + project.id + '&edit=1'"
               >
-                <img
-                  :src="$baseURL + '/img/edit.png'"
-                  border="0"
-                  alt="subscribe"
-                >
+                <font-awesome-icon icon="fa-solid fa-bell"/>
               </a>
               <a
                 v-if="project.role > 0"
                 title="Claim sites"
                 :href="$baseURL + '/editSite.php?projectid=' + project.id"
               >
-                <img
-                  :src="$baseURL + '/img/systemtray.png'"
-                  border="0"
-                  alt="claimsite"
-                >
+                <font-awesome-icon icon="fa-solid fa-computer"/>
               </a>
               <a
                 v-if="project.role > 1"
                 title="Edit project"
                 :href="$baseURL + '/project/' + project.id + '/edit'"
               >
-                <img
-                  :src="$baseURL + '/img/edit2.png'"
-                  border="0"
-                  alt="editproject"
-                >
+                <font-awesome-icon icon="fa-solid fa-pencil"/>
               </a>
               <a
                 v-if="project.role > 1"
                 title="Manage subprojects"
                 :href="$baseURL + '/manageSubProject.php?projectid=' + project.id"
               >
-                <img
-                  :src="$baseURL + '/img/subproject.png'"
-                  border="0"
-                  alt="subproject"
-                >
+                <font-awesome-icon icon="fa-solid fa-folder-tree"/>
               </a>
               <a
                 v-if="project.role > 1"
                 title="Manage project groups"
                 :href="$baseURL + '/manageBuildGroup.php?projectid=' + project.id"
               >
-                <img
-                  :src="$baseURL + '/img/edit_group.png'"
-                  border="0"
-                  alt="managegroups"
-                >
+                <font-awesome-icon icon="fa-solid fa-layer-group"/>
               </a>
               <a
                 v-if="project.role > 1"
                 title="Manage project users"
                 :href="$baseURL + '/manageProjectRoles.php?projectid=' + project.id"
               >
-                <img
-                  :src="$baseURL + '/img/users.png'"
-                  border="0"
-                  alt="manageusers"
-                >
+                <font-awesome-icon icon="fa-solid fa-user-pen"/>
               </a>
               <a
                 v-if="project.role > 1"
                 title="Manage project coverage"
                 :href="$baseURL + '/manageCoverage.php?projectid=' + project.id"
               >
-                <img
-                  :src="$baseURL + '/img/filecoverage.png'"
-                  border="0"
-                  alt="managecoverage"
-                >
+                <font-awesome-icon icon="fa-solid fa-chart-line"/>
               </a>
             </td>
             <td
@@ -618,7 +588,6 @@
 
     <!-- Global Administration -->
     <table
-      v-if="cdash.user_is_admin == 1"
       border="0"
       cellpadding="4"
       cellspacing="0"
@@ -633,80 +602,90 @@
         </tr>
       </thead>
       <tbody>
+        <template v-if="cdash.user_is_admin == 1">
+          <tr>
+            <td>
+              <a :href="$baseURL + '/project/new'">Create new project</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a :href="$baseURL + '/manageProjectRoles.php'">Manage project roles</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a :href="$baseURL + '/manageSubProject.php'">Manage subproject</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a :href="$baseURL + '/manageBuildGroup.php'">Manage project groups</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a :href="$baseURL + '/manageCoverage.php'">Manage project coverage</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a :href="$baseURL + '/manageBanner.php'">Manage banner message</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a :href="$baseURL + '/manageUsers.php'">Manage users</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a :href="$baseURL + '/authtokens/manage'">Manage authentication tokens</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a :href="$baseURL + '/upgrade.php'">Maintenance</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a :href="$baseURL + '/sites'">Site Statistics</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a :href="$baseURL + '/userStatistics.php'">User Statistics</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a :href="$baseURL + '/removeBuilds.php'">Remove Builds</a>
+            </td>
+          </tr>
+          <tr v-if="cdash.show_monitor">
+            <td>
+              <a :href="$baseURL + '/monitor'">Monitor / Processing Statistics</a>
+            </td>
+          </tr>
+        </template>
         <tr>
           <td>
-            <a :href="$baseURL + '/project/new'">Create new project</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a :href="$baseURL + '/manageProjectRoles.php'">Manage project roles</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a :href="$baseURL + '/manageSubProject.php'">Manage subproject</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a :href="$baseURL + '/manageBuildGroup.php'">Manage project groups</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a :href="$baseURL + '/manageCoverage.php'">Manage project coverage</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a :href="$baseURL + '/manageBanner.php'">Manage banner message</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a :href="$baseURL + '/manageUsers.php'">Manage users</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a :href="$baseURL + '/authtokens/manage'">Manage authentication tokens</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a :href="$baseURL + '/upgrade.php'">Maintenance</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a :href="$baseURL + '/sites'">Site Statistics</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a :href="$baseURL + '/userStatistics.php'">User Statistics</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a :href="$baseURL + '/removeBuilds.php'">Remove Builds</a>
-          </td>
-        </tr>
-        <tr v-if="cdash.show_monitor">
-          <td>
-            <a :href="$baseURL + '/monitor'">Monitor / Processing Statistics</a>
+            <a :href="$baseURL + '/profile'">My Profile</a>
           </td>
         </tr>
       </tbody>
     </table>
-  </section>
+  </loading-indicator>
 </template>
 
 <script>
 import ApiLoader from './shared/ApiLoader';
+import LoadingIndicator from "./shared/LoadingIndicator.vue";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 export default {
   name: "UserHomepage",
+  components: { FontAwesomeIcon, LoadingIndicator },
 
   data () {
     return {
@@ -800,5 +779,9 @@ export default {
 
 #tokenDescriptionlabel {
   margin: 0 0.5em 0 0;
+}
+
+.icon-row > a {
+  padding: 0 0.3em;
 }
 </style>

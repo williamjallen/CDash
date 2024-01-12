@@ -6,31 +6,55 @@ function(add_vue_test TestName)
   )
 endfunction()
 
-function(add_cypress_test TestName)
+function(set_app_url)
   if(DEFINED ENV{APP_URL})
-    set(APP_URL $ENV{APP_URL})
+    set(APP_URL "$ENV{APP_URL}" PARENT_SCOPE)
   elseif(EXISTS ${CDash_SOURCE_DIR}/.env)
     file(STRINGS ${CDash_SOURCE_DIR}/.env env_vars)
     foreach(var IN LISTS env_vars)
       if(var MATCHES "^APP_URL=(.*)$")
-        set(APP_URL "${CMAKE_MATCH_1}")
+        set(APP_URL "${CMAKE_MATCH_1}" PARENT_SCOPE)
         break()
       endif()
     endforeach()
   else()
-    set(APP_URL "http://localhost:8080")
+    set(APP_URL "http://localhost:8080" PARENT_SCOPE)
   endif()
+endfunction()
+
+function(add_cypress_e2e_test TestName)
+  set_app_url()
 
   add_test(
-    NAME cypress/${TestName}
+    NAME cypress/e2e/${TestName}
     COMMAND ${NPX_EXE} cypress run
+      --e2e
       --project ${CDash_SOURCE_DIR}
       --spec ${CDash_SOURCE_DIR}/tests/cypress/e2e/${TestName}.cy.js
       --config baseUrl=${APP_URL}
   )
   # Cypress tries to put stuff in our home directory, which doesn't work for /var/www.
   set_tests_properties(
-    cypress/${TestName}
+    cypress/e2e/${TestName}
+    PROPERTIES
+    ENVIRONMENT "HOME=/cdash;"
+  )
+endfunction()
+
+function(add_cypress_component_test TestName)
+  set_app_url()
+
+  add_test(
+    NAME cypress/component/${TestName}
+    COMMAND ${NPX_EXE} cypress run
+      --component
+      --project ${CDash_SOURCE_DIR}
+      --spec ${CDash_SOURCE_DIR}/tests/cypress/component/${TestName}.cy.js
+      --config baseUrl=${APP_URL}
+  )
+  # Cypress tries to put stuff in our home directory, which doesn't work for /var/www.
+  set_tests_properties(
+    cypress/component/${TestName}
     PROPERTIES
     ENVIRONMENT "HOME=/cdash;"
   )
@@ -52,9 +76,20 @@ add_test(
 
 # Run the JS linter
 add_test(
+  NAME eslint_ignore_list
+  COMMAND
+    awk
+    "BEGIN{rc=0}{if(system(\"ls \"\$1\" >/dev/null 2>&1\")){print\"cannot ignore missing file: \"\$1;rc=1}}END{exit rc}"
+    ${CMAKE_SOURCE_DIR}/.eslintignore
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
+add_test(
   NAME eslint
   COMMAND npm run eslint
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
+set_tests_properties(eslint PROPERTIES
+  FAIL_REGULAR_EXPRESSION " \+[0-9]\+:[0-9]\+ \+warning"
 )
 
 add_vue_test(Spec/build-configure)
@@ -65,6 +100,8 @@ add_vue_test(Spec/manage-measurements)
 add_vue_test(Spec/page-header/header-menu)
 add_vue_test(Spec/test-details)
 
+add_cypress_component_test(loading-indicator)
+
 cdash_install()
 
-add_cypress_test(user-profile)
+add_cypress_e2e_test(user-profile)
