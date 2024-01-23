@@ -21,7 +21,7 @@ return [
         'expires' => env('PASSWORD_EXPIRATION', 0),
         'unique' => env('UNIQUE_PASSWORD_COUNT', 0),
     ],
-    'version' => '3.2.0',
+    'version' => '3.3.0',
     'registration' => [
         'email' => [
             'verify' => env('REGISTRATION_EMAIL_VERIFY', true),
@@ -58,6 +58,8 @@ return [
     'delete_old_subprojects' => env('DELETE_OLD_SUBPROJECTS', true),
     'google_map_api_key' => env('GOOGLE_MAP_API_KEY', null),
     'github_app_id' => env('GITHUB_APP_ID', null),
+    'github_private_key' => env('GITHUB_PRIVATE_KEY', null),
+    'github_webhook_secret' => env('GITHUB_WEBHOOK_SECRET', null),
     'geolocate_ip_addresses' => env('GEOLOCATE_IP_ADDRESSES', true),
     'large_text_limit' => env('LARGE_TEXT_LIMIT', 0),
     'login_field' => env('LOGIN_FIELD', 'Email'),

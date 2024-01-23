@@ -1,7 +1,17 @@
 #!/bin/bash
 
+if [[ "$1" == "--dev" ]]; then
+  DEVELOPMENT=true
+else
+  DEVELOPMENT=false
+fi
+
 echo "=================================================================================";
-echo "Beginning CDash installation...";
+if $DEVELOPMENT; then
+  echo "Beginning development CDash installation..."
+else
+  echo "Configuring production CDash installation..."
+fi
 
 error_handler() {
 echo "
@@ -29,16 +39,22 @@ echo "Enabling maintenance mode..."
 php artisan down --render="maintenance" --refresh=5
 
 echo "Updating vendor dependencies..."
-npm install
-composer install
+if $DEVELOPMENT; then
+  npm install
+  composer install
+else
+  npm install --omit=dev
+  composer install --no-dev --optimize-autoloader
+fi
 
 echo "Running migrations..."
-php artisan migrate
+php artisan migrate --force
 php artisan version:set
 
 echo "Clearing caches..."
 php artisan route:cache
 php artisan view:cache
+php artisan lighthouse:cache
 
 echo "Building the website..."
 npm run prod --stats-children
