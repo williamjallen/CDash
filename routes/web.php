@@ -27,9 +27,9 @@ Auth::routes($routeList);
 Route::match(['get', 'post'], '/install', 'AdminController@install');
 Route::permanentRedirect('/install.php', '/install');
 
-Route::get('/oauth/{service}', 'OAuthController@authenticate');
-Route::get('/oauth/callback/{service}', 'OAuthController@login')
-    ->name('oauth.callback');
+Route::get('/oauth/{service}', 'OAuthController@socialite');
+Route::get('/oauth/callback/{service}', 'OAuthController@callback');
+
 Route::post('/saml2/login', 'Auth\LoginController@saml2Login');
 
 Route::get('/auth/{service}/redirect', 'OAuthController@socialite');
@@ -74,7 +74,7 @@ Route::get('/buildSummary.php', function (Request $request) {
 });
 
 Route::get('/builds/{id}/configure', 'BuildController@configure');
-Route::permanentRedirect('/builds/{id}/configure', '/builds/{id}/configure');
+Route::permanentRedirect('/build/{id}/configure', '/builds/{id}/configure');
 Route::get('/viewConfigure.php', function (Request $request) {
     $buildid = $request->query('buildid');
     return redirect("/builds/{$buildid}/configure", 301);
