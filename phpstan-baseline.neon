@@ -815,13 +815,18 @@ parameters:
 			path: app/Http/Controllers/CDash.php
 
 		-
+			message: "#^Argument of an invalid type array\\<int, mixed\\>\\|false supplied for foreach, only iterables are supported\\.$#"
+			count: 2
+			path: app/Http/Controllers/CoverageController.php
+
+		-
 			message: "#^Argument of an invalid type array\\<int\\>\\|false supplied for foreach, only iterables are supported\\.$#"
 			count: 3
 			path: app/Http/Controllers/CoverageController.php
 
 		-
 			message: "#^Argument of an invalid type array\\|false supplied for foreach, only iterables are supported\\.$#"
-			count: 9
+			count: 7
 			path: app/Http/Controllers/CoverageController.php
 
 		-
@@ -3120,26 +3125,6 @@ parameters:
 			path: app/Models/User.php
 
 		-
-			message: "#^PHPDoc type array of property App\\\\Models\\\\User\\:\\:\\$fillable is not the same as PHPDoc type array\\<string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: "#^PHPDoc type array of property App\\\\Models\\\\User\\:\\:\\$hidden is not the same as PHPDoc type list\\<string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$hidden\\.$#"
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: "#^Property App\\\\Models\\\\User\\:\\:\\$fillable type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: "#^Property App\\\\Models\\\\User\\:\\:\\$hidden type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: app/Models/User.php
-
-		-
 			message: "#^Property App\\\\Models\\\\User\\:\\:\\$user has no type specified\\.$#"
 			count: 1
 			path: app/Models/User.php
@@ -3148,6 +3133,16 @@ parameters:
 			message: "#^Variable method call on CDash\\\\Model\\\\User\\.$#"
 			count: 1
 			path: app/Models/User.php
+
+		-
+			message: "#^Dynamic call to static method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<App\\\\Models\\\\User\\>\\:\\:exists\\(\\)\\.$#"
+			count: 2
+			path: app/Policies/ProjectPolicy.php
+
+		-
+			message: "#^Dynamic call to static method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<App\\\\Models\\\\User\\>\\:\\:where\\(\\)\\.$#"
+			count: 2
+			path: app/Policies/ProjectPolicy.php
 
 		-
 			message: "#^Parameter \\#2 \\$offset of function substr expects int, int\\|false given\\.$#"
@@ -3198,16 +3193,6 @@ parameters:
 			message: "#^Property App\\\\Providers\\\\EventServiceProvider\\:\\:\\$listen type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: app/Providers/EventServiceProvider.php
-
-		-
-			message: "#^Method App\\\\Providers\\\\RouteServiceProvider\\:\\:mapApiRoutes\\(\\) throws checked exception BadMethodCallException but it's missing from the PHPDoc @throws tag\\.$#"
-			count: 2
-			path: app/Providers/RouteServiceProvider.php
-
-		-
-			message: "#^Method App\\\\Providers\\\\RouteServiceProvider\\:\\:mapWebRoutes\\(\\) throws checked exception BadMethodCallException but it's missing from the PHPDoc @throws tag\\.$#"
-			count: 1
-			path: app/Providers/RouteServiceProvider.php
 
 		-
 			message: "#^PHPDoc type string of property App\\\\Providers\\\\RouteServiceProvider\\:\\:\\$namespace is not the same as PHPDoc type string\\|null of overridden property Illuminate\\\\Foundation\\\\Support\\\\Providers\\\\RouteServiceProvider\\:\\:\\$namespace\\.$#"
@@ -3301,11 +3286,6 @@ parameters:
 			message: "#^Method App\\\\Utils\\\\PageTimer\\:\\:end\\(\\) has parameter \\$response with no type specified\\.$#"
 			count: 1
 			path: app/Utils/PageTimer.php
-
-		-
-			message: "#^Loose comparison via \"\\=\\=\" is not allowed\\.$#"
-			count: 3
-			path: app/Utils/ProjectPermissions.php
 
 		-
 			message: "#^Binary operation \"\\-\" between string and 1 results in an error\\.$#"
@@ -5098,11 +5078,6 @@ parameters:
 			path: app/cdash/app/Controller/Api/Index.php
 
 		-
-			message: "#^Binary operation \"\\+\" between int\\|string\\|false and 1 results in an error\\.$#"
-			count: 1
-			path: app/cdash/app/Controller/Api/Index.php
-
-		-
 			message: "#^Binary operation \"\\.\\=\" between list\\<string\\>\\|string and string results in an error\\.$#"
 			count: 1
 			path: app/cdash/app/Controller/Api/Index.php
@@ -5225,6 +5200,11 @@ parameters:
 
 		-
 			message: "#^Method CDash\\\\Controller\\\\Api\\\\Index\\:\\:recordGenerationTime\\(\\) has parameter \\$response with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/cdash/app/Controller/Api/Index.php
+
+		-
+			message: "#^Only numeric types are allowed in \\+, int\\<0, max\\>\\|false given on the left side\\.$#"
 			count: 1
 			path: app/cdash/app/Controller/Api/Index.php
 
@@ -5585,16 +5565,6 @@ parameters:
 
 		-
 			message: "#^Method CDash\\\\Controller\\\\Api\\\\ResultsApi\\:\\:validateDateString\\(\\) has parameter \\$date with no type specified\\.$#"
-			count: 1
-			path: app/cdash/app/Controller/Api/ResultsApi.php
-
-		-
-			message: "#^Only booleans are allowed in a negated boolean, \\(float\\|int\\) given\\.$#"
-			count: 1
-			path: app/cdash/app/Controller/Api/ResultsApi.php
-
-		-
-			message: "#^Parameter \\#1 \\$array of function array_sum expects array, array\\<string, array\\<int, string\\>\\|int\\>\\|false given\\.$#"
 			count: 1
 			path: app/cdash/app/Controller/Api/ResultsApi.php
 
@@ -12442,11 +12412,6 @@ parameters:
 			path: app/cdash/include/Test/CDashTestCase.php
 
 		-
-			message: "#^Dynamic call to static method PHPUnit\\\\Framework\\\\TestCase\\:\\:returnCallback\\(\\)\\.$#"
-			count: 1
-			path: app/cdash/include/Test/CDashTestCase.php
-
-		-
 			message: "#^Method CDash\\\\Test\\\\CDashTestCase\\:\\:createMockFromBuilder\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: app/cdash/include/Test/CDashTestCase.php
@@ -12541,7 +12506,7 @@ parameters:
 				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
 				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
 			"""
-			count: 2
+			count: 1
 			path: app/cdash/include/Test/CDashUseCaseTestCase.php
 
 		-
@@ -16219,14 +16184,6 @@ parameters:
 			path: app/cdash/tests/case/CDash/Api/GitHubWebhookTest.php
 
 		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 1
-			path: app/cdash/tests/case/CDash/Api/GitHubWebhookTest.php
-
-		-
 			message: "#^Dynamic call to static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertEquals\\(\\)\\.$#"
 			count: 3
 			path: app/cdash/tests/case/CDash/Api/GitHubWebhookTest.php
@@ -16590,7 +16547,7 @@ parameters:
 				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
 				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
 			"""
-			count: 4
+			count: 3
 			path: app/cdash/tests/case/CDash/Lib/Repository/GitHubTest.php
 
 		-
@@ -16724,14 +16681,6 @@ parameters:
 		-
 			message: "#^Access to property \\$Id on an unknown class PHPUnit_Framework_MockObject_MockObject\\.$#"
 			count: 2
-			path: app/cdash/tests/case/CDash/Messaging/Subscription/CommitAuthorSubscriptionBuilderTest.php
-
-		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 3
 			path: app/cdash/tests/case/CDash/Messaging/Subscription/CommitAuthorSubscriptionBuilderTest.php
 
 		-
@@ -16915,11 +16864,6 @@ parameters:
 			path: app/cdash/tests/case/CDash/Messaging/Subscription/CommitAuthorSubscriptionBuilderTest.php
 
 		-
-			message: "#^PHPDoc tag @var with type App\\\\Models\\\\Site is not subtype of native type PHPUnit\\\\Framework\\\\MockObject\\\\MockObject\\.$#"
-			count: 1
-			path: app/cdash/tests/case/CDash/Messaging/Subscription/CommitAuthorSubscriptionBuilderTest.php
-
-		-
 			message: "#^PHPDoc tag @var with type CDash\\\\Model\\\\Build&PHPUnit_Framework_MockObject_MockObject is not subtype of native type PHPUnit\\\\Framework\\\\MockObject\\\\MockObject\\.$#"
 			count: 1
 			path: app/cdash/tests/case/CDash/Messaging/Subscription/CommitAuthorSubscriptionBuilderTest.php
@@ -16957,14 +16901,6 @@ parameters:
 		-
 			message: "#^Access to property \\$Name on an unknown class PHPUnit_Framework_MockObject_MockObject\\.$#"
 			count: 4
-			path: app/cdash/tests/case/CDash/Messaging/Subscription/UserSubscriptionBuilderTest.php
-
-		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 2
 			path: app/cdash/tests/case/CDash/Messaging/Subscription/UserSubscriptionBuilderTest.php
 
 		-
@@ -17083,14 +17019,6 @@ parameters:
 			path: app/cdash/tests/case/CDash/Messaging/Subscription/UserSubscriptionBuilderTest.php
 
 		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 1
-			path: app/cdash/tests/case/CDash/Messaging/Topic/AuthoredTopicTest.php
-
-		-
 			message: "#^Call to method expects\\(\\) on an unknown class PHPUnit_Framework_MockObject_MockObject\\.$#"
 			count: 1
 			path: app/cdash/tests/case/CDash/Messaging/Topic/AuthoredTopicTest.php
@@ -17133,14 +17061,6 @@ parameters:
 		-
 			message: "#^Access to property \\$Id on an unknown class PHPUnit_Framework_MockObject_MockObject\\.$#"
 			count: 4
-			path: app/cdash/tests/case/CDash/Messaging/Topic/BuildErrorTopicTest.php
-
-		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 3
 			path: app/cdash/tests/case/CDash/Messaging/Topic/BuildErrorTopicTest.php
 
 		-
@@ -17514,14 +17434,6 @@ parameters:
 			path: app/cdash/tests/case/CDash/Messaging/Topic/FixedTopicTest.php
 
 		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 1
-			path: app/cdash/tests/case/CDash/Messaging/Topic/FixedTopicTest.php
-
-		-
 			message: "#^Call to function in_array\\(\\) requires parameter \\#3 to be set\\.$#"
 			count: 2
 			path: app/cdash/tests/case/CDash/Messaging/Topic/FixedTopicTest.php
@@ -17642,14 +17554,6 @@ parameters:
 			path: app/cdash/tests/case/CDash/Messaging/Topic/MissingTestTopicTest.php
 
 		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 3
-			path: app/cdash/tests/case/CDash/Messaging/Topic/MissingTestTopicTest.php
-
-		-
 			message: "#^Call to method expects\\(\\) on an unknown class PHPUnit_Framework_MockObject_MockObject\\.$#"
 			count: 3
 			path: app/cdash/tests/case/CDash/Messaging/Topic/MissingTestTopicTest.php
@@ -17736,14 +17640,6 @@ parameters:
 
 		-
 			message: "#^Access to property \\$Id on an unknown class PHPUnit_Framework_MockObject_MockObject\\.$#"
-			count: 2
-			path: app/cdash/tests/case/CDash/Messaging/Topic/TestFailureTopicTest.php
-
-		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
 			count: 2
 			path: app/cdash/tests/case/CDash/Messaging/Topic/TestFailureTopicTest.php
 
@@ -18003,14 +17899,6 @@ parameters:
 			path: app/cdash/tests/case/CDash/Messaging/Topic/UpdateErrorTopicTest.php
 
 		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 1
-			path: app/cdash/tests/case/CDash/Messaging/Topic/UpdateErrorTopicTest.php
-
-		-
 			message: "#^Call to function in_array\\(\\) requires parameter \\#3 to be set\\.$#"
 			count: 2
 			path: app/cdash/tests/case/CDash/Messaging/Topic/UpdateErrorTopicTest.php
@@ -18259,14 +18147,6 @@ parameters:
 			path: app/cdash/tests/case/CDash/Model/BuildFailureTest.php
 
 		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 1
-			path: app/cdash/tests/case/CDash/Model/BuildFailureTest.php
-
-		-
 			message: "#^Dynamic call to static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertEquals\\(\\)\\.$#"
 			count: 1
 			path: app/cdash/tests/case/CDash/Model/BuildFailureTest.php
@@ -18312,14 +18192,6 @@ parameters:
 			path: app/cdash/tests/case/CDash/Model/BuildRelationshipTest.php
 
 		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 2
-			path: app/cdash/tests/case/CDash/Model/BuildRelationshipTest.php
-
-		-
 			message: "#^Dynamic call to static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertEquals\\(\\)\\.$#"
 			count: 11
 			path: app/cdash/tests/case/CDash/Model/BuildRelationshipTest.php
@@ -18362,14 +18234,6 @@ parameters:
 		-
 			message: "#^Access to property \\$Id on an unknown class PHPUnit_Framework_MockObject_MockObject\\.$#"
 			count: 2
-			path: app/cdash/tests/case/CDash/Model/BuildTest.php
-
-		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 1
 			path: app/cdash/tests/case/CDash/Model/BuildTest.php
 
 		-
@@ -18478,14 +18342,6 @@ parameters:
 			path: app/cdash/tests/case/CDash/Model/PendingSubmissionsTest.php
 
 		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 1
-			path: app/cdash/tests/case/CDash/Model/PendingSubmissionsTest.php
-
-		-
 			message: "#^Dynamic call to static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertEquals\\(\\)\\.$#"
 			count: 8
 			path: app/cdash/tests/case/CDash/Model/PendingSubmissionsTest.php
@@ -18494,14 +18350,6 @@ parameters:
 			message: "#^Method PendingSubmissionsTest\\:\\:testPendingSubmissionsModel\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: app/cdash/tests/case/CDash/Model/PendingSubmissionsTest.php
-
-		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 1
-			path: app/cdash/tests/case/CDash/Model/RepositoryTest.php
 
 		-
 			message: "#^Call to method getInstallationId\\(\\) on an unknown class CDash\\\\Model\\\\RepositoryInterface\\.$#"
@@ -18752,14 +18600,6 @@ parameters:
 			path: app/cdash/tests/case/CDash/Service/RepositoryServiceTest.php
 
 		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 2
-			path: app/cdash/tests/case/CDash/ServiceContainerTest.php
-
-		-
 			message: "#^Dynamic call to static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\)\\.$#"
 			count: 1
 			path: app/cdash/tests/case/CDash/ServiceContainerTest.php
@@ -18803,14 +18643,6 @@ parameters:
 			message: "#^Property ServiceContainerTest\\:\\:\\$di has no type specified\\.$#"
 			count: 1
 			path: app/cdash/tests/case/CDash/ServiceContainerTest.php
-
-		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 2
-			path: app/cdash/tests/case/CDash/Submission/CommitAuthorHandlerTraitTest.php
 
 		-
 			message: "#^Dynamic call to static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertContains\\(\\)\\.$#"
@@ -19271,14 +19103,6 @@ parameters:
 			message: "#^Method TestingHandlerTest\\:\\:testTestingHandlerIsACommitAuthorHandler\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: app/cdash/tests/case/CDash/XmlHandler/TestingHandlerTest.php
-
-		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 1
-			path: app/cdash/tests/case/CDash/XmlHandler/UpdateHandlerTest.php
 
 		-
 			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) with 'CDash\\\\\\\\Submission\\\\\\\\CommitAuthorHandlerInterface' and UpdateHandler will always evaluate to true\\.$#"
@@ -29958,6 +29782,11 @@ parameters:
 			path: tests/Feature/CDashTest.php
 
 		-
+			message: "#^Dynamic call to static method Illuminate\\\\Testing\\\\TestResponse\\:\\:assertGraphQLErrorMessage\\(\\)\\.$#"
+			count: 3
+			path: tests/Feature/GraphQL/ProjectTest.php
+
+		-
 			message: "#^Call to an undefined method Mockery\\\\Expectation\\:\\:shouldReceive\\(\\)\\.$#"
 			count: 3
 			path: tests/Feature/LdapAuthWithRulesTest.php
@@ -30034,7 +29863,7 @@ parameters:
 
 		-
 			message: "#^Cannot access property \\$id on App\\\\Models\\\\User\\|null\\.$#"
-			count: 4
+			count: 1
 			path: tests/Feature/PasswordRotation.php
 
 		-
@@ -30043,22 +29872,9 @@ parameters:
 			path: tests/Feature/PasswordRotation.php
 
 		-
-			message: "#^Parameter \\#1 \\$user of method Illuminate\\\\Foundation\\\\Testing\\\\TestCase\\:\\:actingAs\\(\\) expects Illuminate\\\\Contracts\\\\Auth\\\\Authenticatable, App\\\\Models\\\\User\\|null given\\.$#"
-			count: 5
-			path: tests/Feature/PasswordRotation.php
-
-		-
 			message: "#^Property Tests\\\\Feature\\\\PasswordRotation\\:\\:\\$user has no type specified\\.$#"
 			count: 1
 			path: tests/Feature/PasswordRotation.php
-
-		-
-			message: """
-				#^Call to deprecated method setMethods\\(\\) of class PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/pull/3687$#
-			"""
-			count: 1
-			path: tests/Feature/ProjectPermissions.php
 
 		-
 			message: "#^Property Tests\\\\Feature\\\\ProjectPermissions\\:\\:\\$mock_system has no type specified\\.$#"
