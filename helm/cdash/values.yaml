@@ -1,0 +1,16 @@
+website:
+  image: kitware/cdash:testing
+  resources:
+    limits:
+      memory: 256Mi
+
+# See here for more config settings: https://github.com/bitnami/charts/tree/main/bitnami/postgresql
+postgresql:
+  enabled: true
+  auth:
+    database: cdash
+
+global:
+  postgresql:
+    auth:
+      postgresPassword: test

@@ -1,0 +1,11 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: "{{ .Release.Name }}-website"
+data:
+  APP_ENV: "production"
+  DB_DATABASE: "cdash"
+  DB_PORT: "5432"
+  DB_HOST: "{{ .Release.Name }}-postgresql"
+  DB_CONNECTION: "pgsql"
+  DB_LOGIN: "postgres"
