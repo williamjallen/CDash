@@ -3,7 +3,9 @@ apiVersion: v1
 metadata:
   name: "{{ .Release.Name }}-website"
 data:
+  APP_URL: "http://localhost:8080"
   APP_ENV: "production"
+
   DB_DATABASE: "cdash"
   DB_PORT: "5432"
   DB_HOST: "{{ .Release.Name }}-postgresql"

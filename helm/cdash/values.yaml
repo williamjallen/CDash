@@ -1,5 +1,9 @@
 website:
-  image: kitware/cdash:testing
+  resources:
+    limits:
+      memory: 256Mi
+
+worker:
   resources:
     limits:
       memory: 256Mi
@@ -11,6 +15,9 @@ postgresql:
     database: cdash
 
 global:
+  cdash:
+    image: kitware/cdash:latest
+
   postgresql:
     auth:
       postgresPassword: test

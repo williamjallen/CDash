@@ -1,26 +1,26 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: "{{ .Release.Name }}-website"
+  name: "{{ .Release.Name }}-worker"
   labels:
-    app: "{{ .Release.Name }}-website"
+    app: "{{ .Release.Name }}-worker"
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: "{{ .Release.Name }}-website"
+      app: "{{ .Release.Name }}-worker"
   template:
     metadata:
       labels:
-        app: "{{ .Release.Name }}-website"
+        app: "{{ .Release.Name }}-worker"
     spec:
       containers:
-        - name: "{{ .Release.Name }}-website"
+        - name: "{{ .Release.Name }}-worker"
           image: {{ .Values.global.cdash.image | quote }}
           resources:
-            {{ toYaml .Values.website.resources | nindent 12 }}
+            {{ toYaml .Values.worker.resources | nindent 12 }}
           command: [ "/bin/bash", "/cdash/docker/docker-entrypoint.sh" ]
-          args: [ "start-website" ]
+          args: [ "start-worker" ]
           {{ template "cdash.environment" . }}
