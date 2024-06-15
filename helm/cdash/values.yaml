@@ -8,16 +8,18 @@ worker:
     limits:
       memory: 256Mi
 
-# See here for more config settings: https://github.com/bitnami/charts/tree/main/bitnami/postgresql
-postgresql:
-  enabled: true
-  auth:
-    database: cdash
-
 global:
   cdash:
     image: kitware/cdash:latest
 
+  # See here for more config settings: https://github.com/bitnami/charts/tree/main/bitnami/postgresql
   postgresql:
+    enabled: true
     auth:
       postgresPassword: test
+      database: cdash
+
+  # See here for more config settings: https://github.com/bitnami/charts/tree/main/bitnami/minio
+  minio:
+    enabled: true
+    defaultBuckets: cdash
