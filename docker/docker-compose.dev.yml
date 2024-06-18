@@ -1,28 +1,9 @@
 services:
   cdash:
-    image: kitware/cdash:testing
+    image: kitware/cdash:latest
     ports:
       - 8080:8080
-    build:
-      args:
-        DEVELOPMENT_BUILD: 1
     environment:
       CYPRESS_CACHE_FOLDER: /cdash/cypress_cache
     volumes:
       - ..:/cdash_src:ro
-    links:
-      - ldap
-
-  # Used for testing LDAP authentication
-  ldap:
-    image: bitnami/openldap
-    container_name: ldap
-    ports:
-      - 389:389
-      - 636:636
-    environment:
-      LDAP_ADMIN_USERNAME: admin
-      LDAP_ADMIN_PASSWORD: password
-      LDAP_USERS: ldapuser01,ldapuser02
-      LDAP_PASSWORDS: password1,password2
-      LDAP_PORT_NUMBER: 389
