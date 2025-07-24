@@ -371,6 +371,9 @@ set_tests_properties(junithandler PROPERTIES DEPENDS /CDash/XmlHandler/UpdateHan
 add_php_test(configurewarnings)
 set_tests_properties(configurewarnings PROPERTIES DEPENDS /CDash/XmlHandler/UpdateHandler)
 
+add_php_test(bazeljson)
+set_tests_properties(bazeljson PROPERTIES DEPENDS /CDash/XmlHandler/UpdateHandler)
+
 add_feature_test(/Feature/AutoRemoveBuildsCommand)
 
 ###################################################################################################
@@ -413,6 +416,7 @@ set_property(TEST install_2 APPEND PROPERTY DEPENDS
   issuecreation
   junithandler
   configurewarnings
+  bazeljson
 )
 
 
@@ -629,11 +633,8 @@ set_tests_properties(outputcolor PROPERTIES DEPENDS coveragedirectories)
 add_php_test(timestatus)
 set_tests_properties(timestatus PROPERTIES DEPENDS outputcolor)
 
-add_php_test(bazeljson)
-set_tests_properties(bazeljson PROPERTIES DEPENDS timestatus)
-
 add_php_test(buildrelationship)
-set_tests_properties(buildrelationship PROPERTIES DEPENDS bazeljson)
+set_tests_properties(buildrelationship PROPERTIES DEPENDS timestatus)
 
 add_php_test(submission_assign_buildid)
 set_tests_properties(submission_assign_buildid PROPERTIES DEPENDS buildrelationship)

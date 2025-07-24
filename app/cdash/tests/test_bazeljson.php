@@ -20,8 +20,20 @@ class BazelJSONTestCase extends KWWebTestCase
 
     public function testBazelJSON()
     {
+        // Create a new project.
+        $settings = [
+            'Name' => 'Bazel',
+            'Public' => 1,
+        ];
+        $projectid = $this->createProject($settings);
+        if ($projectid < 1) {
+            $this->fail('Failed to create project');
+        }
+        $project = new Project();
+        $project->Id = $projectid;
+
         // Submit testing data.
-        $buildid = $this->submit_data('InsightExample', 'BazelJSON',
+        $buildid = $this->submit_data('Bazel', 'BazelJSON',
             '0a9b0aeeb73618cd10d6e1bee221fd71',
             dirname(__FILE__) . '/data/Bazel/bazel_BEP.json');
         if (!$buildid) {
@@ -71,7 +83,7 @@ class BazelJSONTestCase extends KWWebTestCase
         }
 
         // Submit the same data again to verify that no testdiff is recorded.
-        $buildid2 = $this->submit_data('InsightExample', 'BazelJSON',
+        $buildid2 = $this->submit_data('Bazel', 'BazelJSON',
             '0a9b0aeeb73618cd10d6e1bee221fd71',
             dirname(__FILE__) . '/data/Bazel/bazel_BEP.json',
             '20170824-1835-Experimental', '1503599755');
@@ -84,6 +96,8 @@ class BazelJSONTestCase extends KWWebTestCase
         // Cleanup.
         DatabaseCleanupUtils::removeBuild($buildid);
         DatabaseCleanupUtils::removeBuild($buildid2);
+
+        $project->Delete();
     }
 
     public function testFilterBazelJSON()
@@ -249,8 +263,20 @@ class BazelJSONTestCase extends KWWebTestCase
 
     public function testBazelTestFailed()
     {
+        // Create a new project.
+        $settings = [
+            'Name' => 'Bazel',
+            'Public' => 1,
+        ];
+        $projectid = $this->createProject($settings);
+        if ($projectid < 1) {
+            $this->fail('Failed to create project');
+        }
+        $project = new Project();
+        $project->Id = $projectid;
+
         // Submit testing data.
-        $buildid = $this->submit_data('InsightExample', 'BazelJSON',
+        $buildid = $this->submit_data('Bazel', 'BazelJSON',
             'abc62be615c3f2a469fe6b6ada556b75',
             dirname(__FILE__) . '/data/Bazel/bazel_testFailed.json');
         if (!$buildid) {
@@ -301,12 +327,25 @@ class BazelJSONTestCase extends KWWebTestCase
 
         // Cleanup.
         DatabaseCleanupUtils::removeBuild($buildid);
+        $project->Delete();
     }
 
     public function testBazelTimeout()
     {
+        // Create a new project.
+        $settings = [
+            'Name' => 'Bazel',
+            'Public' => 1,
+        ];
+        $projectid = $this->createProject($settings);
+        if ($projectid < 1) {
+            $this->fail('Failed to create project');
+        }
+        $project = new Project();
+        $project->Id = $projectid;
+
         // Submit testing data.
-        $buildid = $this->submit_data('InsightExample', 'BazelJSON',
+        $buildid = $this->submit_data('Bazel', 'BazelJSON',
             '73817c7f786ff65ce14af7c34a6850ba',
             dirname(__FILE__) . '/data/Bazel/bazel_timeout.json');
         if (!$buildid) {
@@ -357,12 +396,26 @@ class BazelJSONTestCase extends KWWebTestCase
 
         // Cleanup.
         DatabaseCleanupUtils::removeBuild($buildid);
+
+        $project->Delete();
     }
 
     public function testBazelConfigure()
     {
+        // Create a new project.
+        $settings = [
+            'Name' => 'Bazel',
+            'Public' => 1,
+        ];
+        $projectid = $this->createProject($settings);
+        if ($projectid < 1) {
+            $this->fail('Failed to create project');
+        }
+        $project = new Project();
+        $project->Id = $projectid;
+
         // Submit testing data.
-        $buildid = $this->submit_data('InsightExample', 'BazelJSON',
+        $buildid = $this->submit_data('Bazel', 'BazelJSON',
             'e2b864cc0c5308148aea0d143df6d2ba',
             dirname(__FILE__) . '/data/Bazel/bazel_configure.json');
         if (!$buildid) {
@@ -393,12 +446,26 @@ class BazelJSONTestCase extends KWWebTestCase
 
         // Cleanup.
         DatabaseCleanupUtils::removeBuild($buildid);
+
+        $project->Delete();
     }
 
     public function testBazelDuplicateTests()
     {
+        // Create a new project.
+        $settings = [
+            'Name' => 'Bazel',
+            'Public' => 1,
+        ];
+        $projectid = $this->createProject($settings);
+        if ($projectid < 1) {
+            $this->fail('Failed to create project');
+        }
+        $project = new Project();
+        $project->Id = $projectid;
+
         // Submit testing data.
-        $buildid = $this->submit_data('InsightExample', 'BazelJSON',
+        $buildid = $this->submit_data('Bazel', 'BazelJSON',
             '4a42c09a1751848dc5b806c4bc701fd6',
             dirname(__FILE__) . '/data/Bazel/automotive_test.json');
         if (!$buildid) {
@@ -429,12 +496,26 @@ class BazelJSONTestCase extends KWWebTestCase
 
         // Cleanup.
         DatabaseCleanupUtils::removeBuild($buildid);
+
+        $project->Delete();
     }
 
     public function testMultipleLineError()
     {
+        // Create a new project.
+        $settings = [
+            'Name' => 'Bazel',
+            'Public' => 1,
+        ];
+        $projectid = $this->createProject($settings);
+        if ($projectid < 1) {
+            $this->fail('Failed to create project');
+        }
+        $project = new Project();
+        $project->Id = $projectid;
+
         // Submit testing data.
-        $buildid = $this->submit_data('InsightExample', 'BazelJSON',
+        $buildid = $this->submit_data('Bazel', 'BazelJSON',
             '131eabf91e183359d4b3e1ef24482741',
             dirname(__FILE__) . '/data/Bazel/bazel_multiple_line_error.json');
         if (!$buildid) {
@@ -474,12 +555,26 @@ class BazelJSONTestCase extends KWWebTestCase
 
         // Cleanup.
         DatabaseCleanupUtils::removeBuild($buildid);
+
+        $project->Delete();
     }
 
     public function testShardTest()
     {
+        // Create a new project.
+        $settings = [
+            'Name' => 'Bazel',
+            'Public' => 1,
+        ];
+        $projectid = $this->createProject($settings);
+        if ($projectid < 1) {
+            $this->fail('Failed to create project');
+        }
+        $project = new Project();
+        $project->Id = $projectid;
+
         // Submit testing data.
-        $buildid = $this->submit_data('InsightExample', 'BazelJSON',
+        $buildid = $this->submit_data('Bazel', 'BazelJSON',
             'cb99fa74feaf55a6777f3087becbce04',
             dirname(__FILE__) . '/data/Bazel/bazel_shard_test.json');
         if (!$buildid) {
@@ -529,12 +624,26 @@ class BazelJSONTestCase extends KWWebTestCase
 
         // Cleanup.
         DatabaseCleanupUtils::removeBuild($buildid);
+
+        $project->Delete();
     }
 
     public function testShardTestFailures()
     {
+        // Create a new project.
+        $settings = [
+            'Name' => 'Bazel',
+            'Public' => 1,
+        ];
+        $projectid = $this->createProject($settings);
+        if ($projectid < 1) {
+            $this->fail('Failed to create project');
+        }
+        $project = new Project();
+        $project->Id = $projectid;
+
         // Submit testing data.
-        $buildid = $this->submit_data('InsightExample', 'BazelJSON',
+        $buildid = $this->submit_data('Bazel', 'BazelJSON',
             '74df5d4af1b22097caf2304b301fe4d0',
             dirname(__FILE__) . '/data/Bazel/bazel_shard_test_failures.json');
         if (!$buildid) {
@@ -624,12 +733,26 @@ class BazelJSONTestCase extends KWWebTestCase
 
         // Cleanup.
         DatabaseCleanupUtils::removeBuild($buildid);
+
+        $project->Delete();
     }
 
     public function testShardTestTimeout()
     {
+        // Create a new project.
+        $settings = [
+            'Name' => 'Bazel',
+            'Public' => 1,
+        ];
+        $projectid = $this->createProject($settings);
+        if ($projectid < 1) {
+            $this->fail('Failed to create project');
+        }
+        $project = new Project();
+        $project->Id = $projectid;
+
         // Submit testing data.
-        $buildid = $this->submit_data('InsightExample', 'BazelJSON',
+        $buildid = $this->submit_data('Bazel', 'BazelJSON',
             'aa689b38ea361e5ccdc6b59755fbec64',
             dirname(__FILE__) . '/data/Bazel/bazel_shard_test_timeout.json');
         if (!$buildid) {
@@ -710,6 +833,8 @@ class BazelJSONTestCase extends KWWebTestCase
 
         // Cleanup.
         DatabaseCleanupUtils::removeBuild($buildid);
+
+        $project->Delete();
     }
 
     private function submit_data($project_name, $upload_type, $md5, $file_path,
