@@ -75,35 +75,37 @@
                 </div>
               </div>
               <div class="tw-pl-12 tw-pt-2 tw-space-y-4">
-                <project-logo
-                  v-if="project"
-                  :project-name="form.name"
-                  :image-url="project.logoUrl"
-                  class="tw-w-16 tw-h-16"
-                />
-                <form
-                  :action="`/projects/${projectId}/logo`"
-                  method="post"
-                  enctype="multipart/form-data"
-                  class="tw-flex-grow tw-flex tw-items-center tw-gap-2"
-                >
-                  <input
-                    type="hidden"
-                    name="_token"
-                    :value="csrfToken"
+                <div class="tw-flex tw-flex-row tw-gap-2">
+                  <project-logo
+                    v-if="project"
+                    :project-name="form.name"
+                    :image-url="project.logoUrl"
+                    class="tw-w-12"
+                  />
+                  <form
+                    :action="`/projects/${projectId}/logo`"
+                    method="post"
+                    enctype="multipart/form-data"
+                    class="tw-flex-grow tw-flex tw-items-center tw-gap-2"
                   >
-                  <input
-                    type="file"
-                    name="logo"
-                    class="tw-file-input tw-file-input-bordered tw-file-input-accent"
-                  >
-                  <button
-                    type="submit"
-                    class="tw-btn tw-btn-primary"
-                  >
-                    Upload
-                  </button>
-                </form>
+                    <input
+                      type="hidden"
+                      name="_token"
+                      :value="csrfToken"
+                    >
+                    <input
+                      type="file"
+                      name="logo"
+                      class="tw-file-input tw-file-input-bordered"
+                    >
+                    <button
+                      type="submit"
+                      class="tw-btn"
+                    >
+                      Upload
+                    </button>
+                  </form>
+                </div>
 
                 <label class="tw-form-control tw-w-full">
                   <span class="tw-label tw-label-text tw-font-bold">
