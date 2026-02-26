@@ -63,7 +63,10 @@
 
             <section class="tw-py-6 tw-pb-8 tw-border-b tw-border-neutral-200">
               <div class="tw-flex tw-space-x-5 tw-mb-3 tw-items-center">
-                <font-awesome-icon :icon="FA.faInfo" class="tw-text-2xl tw-text-neutral-400" />
+                <font-awesome-icon
+                  :icon="FA.faInfo"
+                  class="tw-text-2xl tw-text-neutral-400"
+                />
                 <div>
                   <h4 class="tw-text-xl tw-font-bold">
                     Project Information
@@ -140,7 +143,10 @@
 
             <section class="tw-py-6 tw-pb-8 tw-border-b tw-border-neutral-200">
               <div class="tw-flex tw-space-x-5 tw-mb-3 tw-items-center">
-                <font-awesome-icon :icon="FA.faLink" class="tw-text-2xl tw-text-neutral-400" />
+                <font-awesome-icon
+                  :icon="FA.faLink"
+                  class="tw-text-2xl tw-text-neutral-400"
+                />
                 <div>
                   <h3 class="tw-text-xl tw-font-bold">
                     URLs & Links
@@ -187,7 +193,10 @@
 
             <section class="tw-py-6 tw-pb-8 tw-border-b tw-border-neutral-200 tw-space-y-4">
               <div class="tw-flex tw-space-x-5 tw-mb-3 tw-items-center">
-                <font-awesome-icon :icon="FA.faGears" class="tw-text-2xl tw-text-neutral-400" />
+                <font-awesome-icon
+                  :icon="FA.faGears"
+                  class="tw-text-2xl tw-text-neutral-400"
+                />
                 <div>
                   <h4 class="tw-text-xl tw-font-bold">
                     Build Configuration
@@ -241,7 +250,10 @@
 
             <section class="tw-py-6 tw-pb-8 tw-border-b tw-border-neutral-200 tw-space-y-4">
               <div class="tw-flex tw-space-x-5 tw-mb-3 tw-items-center">
-                <font-awesome-icon :icon="FA.faDisplay" class="tw-text-2xl tw-text-neutral-400" />
+                <font-awesome-icon
+                  :icon="FA.faDisplay"
+                  class="tw-text-2xl tw-text-neutral-400"
+                />
                 <div>
                   <h4 class="tw-text-xl tw-font-bold">
                     Display Options
@@ -794,7 +806,8 @@ export default {
           },
         });
         // TODO: Show a success message.
-      } catch (error) {
+      }
+      catch (error) {
         if (error.graphQLErrors) {
           error.graphQLErrors.forEach(e => {
             if (e.extensions && e.extensions.validation) {
@@ -802,11 +815,13 @@ export default {
                 acc[key.replace('input.', '')] = e.extensions.validation[key];
                 return acc;
               }, {});
-            } else {
+            }
+            else {
               this.fatalError = e.message;
             }
           });
-        } else {
+        }
+        else {
           this.fatalError = error.message;
         }
       }
