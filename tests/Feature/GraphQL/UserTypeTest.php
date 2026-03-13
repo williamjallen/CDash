@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\GraphQL;
 
+use App\Models\AuthToken;
 use App\Models\Project;
 use Exception;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -36,6 +37,13 @@ class UserTypeTest extends TestCase
                             }
                         }
                     }
+                    authenticationTokens {
+                        edges {
+                            node {
+                                id
+                            }
+                        }
+                    }
                 }
             }
         ')->assertExactJson([
@@ -48,6 +56,9 @@ class UserTypeTest extends TestCase
                     'institution' => $normalUser->institution,
                     'admin' => $normalUser->admin,
                     'projects' => [
+                        'edges' => [],
+                    ],
+                    'authenticationTokens' => [
                         'edges' => [],
                     ],
                 ],
@@ -223,6 +234,69 @@ class UserTypeTest extends TestCase
                             ...($canSeePublicProject ? [['node' => ['id' => (string) $publicProject->id]]] : []),
                             ...($canSeeProtectedProject ? [['node' => ['id' => (string) $protectedProject->id]]] : []),
                             ...($canSeePrivateProject ? [['node' => ['id' => (string) $privateProject->id]]] : []),
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * @return array<array<mixed>>
+     */
+    public static function authenticationTokensRelationshipVisibilityCases(): array
+    {
+        return [
+            [null, false],
+            ['normal', false],
+            ['self', true],
+            ['admin', true],
+        ];
+    }
+
+    #[DataProvider('authenticationTokensRelationshipVisibilityCases')]
+    public function testAuthenticationTokensRelationshipVisibility(
+        ?string $user,
+        bool $canSeeAuthToken,
+    ): void {
+        $tokenOwner = $this->makeNormalUser();
+        /** @var AuthToken $authToken */
+        $authToken = $tokenOwner->authenticationTokens()->save(AuthToken::factory()->make());
+
+        if ($user === 'normal') {
+            $user = $this->makeNormalUser();
+        } elseif ($user === 'self') {
+            $user = $tokenOwner;
+        } elseif ($user === 'admin') {
+            $user = $this->makeAdminUser();
+        } elseif ($user === null) {
+            $user = null;
+        } else {
+            throw new Exception('Invalid user.');
+        }
+
+        ($user === null ? $this : $this->actingAs($user))->graphQL('
+            query($userid: ID) {
+                user(id: $userid) {
+                    id
+                    authenticationTokens {
+                        edges {
+                            node {
+                                id
+                            }
+                        }
+                    }
+                }
+            }
+        ', [
+            'userid' => $tokenOwner->id,
+        ])->assertExactJson([
+            'data' => [
+                'user' => [
+                    'id' => (string) $tokenOwner->id,
+                    'authenticationTokens' => [
+                        'edges' => [
+                            ...($canSeeAuthToken ? [['node' => ['id' => (string) $authToken->id]]] : []),
                         ],
                     ],
                 ],
