@@ -209,131 +209,190 @@ class Index extends ResultsApi
             $this->endDate,
         ]);
 
+        $latest_rules = [];
         foreach ($stmt as $rule) {
             $buildgroup_name = $rule->name;
             if (strlen($this->buildGroupName) > 0 && $this->buildGroupName != $buildgroup_name) {
                 continue;
             }
-            $buildgroup_id = $rule->id;
-            $buildgroup_position = $rule->position;
             if ($rule->type === 'Latest') {
-                $whereClauses = [];
-                $query_params = [];
+                $latest_rules[] = $rule;
+            }
+        }
 
-                $sql = $this->getIndexQuery();
+        if (empty($latest_rules)) {
+            return $builds;
+        }
 
-                // Add a projectid filter to help the planner choose a better execution plan, even
-                // though all the groups are already associated with the project.
-                $whereClauses[] = 'b.projectid=?';
-                $query_params[] = (int) $this->project->Id;
+        $union_parts = [];
+        $union_params = [];
+        foreach ($latest_rules as $idx => $rule) {
+            // Add a projectid filter to help the planner choose a better execution plan, even
+            // though all the groups are already associated with the project.
+            $whereClauses = ['b.projectid=?'];
+            $params = [(int) $this->project->Id];
+            if (!empty($rule->parentgroupid)) {
+                $whereClauses[] = 'b2g.groupid=?';
+                $params[] = (int) $rule->parentgroupid;
+            }
+            if (!empty($rule->siteid)) {
+                $whereClauses[] = 's.id=?';
+                $params[] = (int) $rule->siteid;
+            }
+            if (!empty($rule->buildname)) {
+                $whereClauses[] = 'b.name=?';
+                $params[] = $rule->buildname;
+            }
 
-                // optional fields: parentgroupid, site, and build name match.
-                // Use these to construct a WHERE clause for our query.
-                if (!empty($rule->parentgroupid)) {
-                    $whereClauses[] = 'b2g.groupid=?';
-                    $query_params[] = (int) $rule->parentgroupid;
-                }
-                if (!empty($rule->siteid)) {
-                    $whereClauses[] = 's.id=?';
-                    $query_params[] = (int) $rule->siteid;
-                }
-                if (!empty($rule->buildname)) {
-                    $whereClauses[] = 'b.name = ?';
-                    $query_params[] = $rule->buildname;
-                }
-                if (count($whereClauses) > 0) {
-                    $sql .= ' WHERE ' . implode(' AND ', $whereClauses);
-                    $sql .= ' AND b.starttime < ? ';
-                    $query_params[] = $this->endDate;
-                }
+            $sql = "SELECT b.id, $idx AS rule_idx " . $this->getIndexJoin();
+            $sql .= ' WHERE ' . implode(' AND ', $whereClauses);
+            $sql .= ' AND b.starttime < ? ';
+            $params[] = $this->endDate;
+            $sql .= $this->filterSQL;
+            $sql .= ' ORDER BY b.submittime DESC LIMIT 1 ';
 
-                $sql .= $this->filterSQL;
+            $union_parts[] = "($sql)";
+            $union_params = array_merge($union_params, $params);
+        }
 
-                // We only want the most recent build.
-                $sql .= ' ORDER BY b.submittime DESC LIMIT 1 ';
+        $full_union_sql = implode(' UNION ALL ', $union_parts);
+        $id_results = DB::select($full_union_sql, $union_params);
 
-                $results = DB::select($sql, $query_params);
-                foreach ($results as $build) {
-                    $build = (array) $build;
-                    $build['groupname'] = $buildgroup_name;
-                    $build['groupid'] = $buildgroup_id;
-                    $build['position'] = $buildgroup_position;
-                    $builds[] = $build;
+        if (empty($id_results)) {
+            return $builds;
+        }
+
+        $unique_build_ids = [];
+        $rule_idx_to_build_id = [];
+        foreach ($id_results as $row) {
+            $unique_build_ids[] = (int) $row->id;
+            $rule_idx_to_build_id[(int) $row->rule_idx] = (int) $row->id;
+        }
+        $unique_build_ids = array_unique($unique_build_ids);
+
+        $placeholders = implode(',', array_fill(0, count($unique_build_ids), '?'));
+        $sql = $this->getIndexQuery() . " WHERE b.id IN ($placeholders)";
+        $full_build_results = DB::select($sql, array_values($unique_build_ids));
+
+        $build_id_to_data = [];
+        foreach ($full_build_results as $full_build) {
+            $build_id_to_data[(int) $full_build->id][] = (array) $full_build;
+        }
+
+        foreach ($latest_rules as $idx => $rule) {
+            if (isset($rule_idx_to_build_id[$idx])) {
+                $build_id = $rule_idx_to_build_id[$idx];
+                if (isset($build_id_to_data[$build_id])) {
+                    foreach ($build_id_to_data[$build_id] as $build_row) {
+                        $build_row['groupname'] = $rule->name;
+                        $build_row['groupid'] = $rule->id;
+                        $build_row['position'] = $rule->position;
+                        $builds[] = $build_row;
+                    }
                 }
             }
         }
+
         return $builds;
+    }
+
+    public function getIndexSelect(): string
+    {
+        return '
+            SELECT
+                b.id,
+                b.siteid,
+                b.parentid,
+                b.done,
+                b.changeid,
+                b.testduration,
+                bu.status AS updatestatus,
+                b.osname AS osname,
+                bu.starttime AS updatestarttime,
+                bu.endtime AS updateendtime,
+                bu.nfiles AS countupdatefiles,
+                bu.warnings AS countupdatewarnings,
+                bu.revision,
+                b.configureduration,
+                be_diff.difference_positive AS countbuilderrordiffp,
+                be_diff.difference_negative AS countbuilderrordiffn,
+                bw_diff.difference_positive AS countbuildwarningdiffp,
+                bw_diff.difference_negative AS countbuildwarningdiffn,
+                ce_diff.difference AS countconfigurewarningdiff,
+                btt.time AS testtime,
+                tnotrun_diff.difference_positive AS counttestsnotrundiffp,
+                tnotrun_diff.difference_negative AS counttestsnotrundiffn,
+                tfailed_diff.difference_positive AS counttestsfaileddiffp,
+                tfailed_diff.difference_negative AS counttestsfaileddiffn,
+                tpassed_diff.difference_positive AS counttestspasseddiffp,
+                tpassed_diff.difference_negative AS counttestspasseddiffn,
+                tstatusfailed_diff.difference_positive AS countteststimestatusfaileddiffp,
+                tstatusfailed_diff.difference_negative AS countteststimestatusfaileddiffn,
+                (SELECT count(buildid) FROM build2note WHERE buildid=b.id) AS countnotes,
+                (SELECT count(buildid) FROM comments WHERE buildid=b.id) AS countcomments,
+                s.name AS sitename,
+                s.outoforder AS siteoutoforder,
+                b.stamp,
+                b.name,
+                b.type,
+                b.generator,
+                b.starttime,
+                b.endtime,
+                b.submittime,
+                b.configureerrors AS countconfigureerrors,
+                b.configurewarnings AS countconfigurewarnings,
+                b.builderrors AS countbuilderrors,
+                b.buildwarnings AS countbuildwarnings,
+                b.buildduration,
+                b.testnotrun AS counttestsnotrun,
+                b.testfailed AS counttestsfailed,
+                b.testpassed AS counttestspassed,
+                b.testtimestatusfailed AS countteststimestatusfailed,
+                cs.loctested,
+                cs.locuntested,
+                cs.loctesteddiff,
+                cs.locuntesteddiff,
+                das.checker,
+                das.numdefects,
+                sp.id AS subprojectid,
+                sp.groupid AS subprojectgroup,
+                sp.position AS subprojectposition,
+                g.name AS groupname,
+                gp.position,
+                g.id AS groupid,
+                (SELECT count(buildid) FROM label2build WHERE buildid=b.id) AS numlabels,
+                (SELECT count(buildid) FROM build2uploadfile WHERE buildid=b.id) AS builduploadfiles
+        ';
+    }
+
+    public function getIndexJoin(): string
+    {
+        return '
+            FROM build AS b
+            LEFT JOIN build2group AS b2g ON (b2g.buildid=b.id)
+            LEFT JOIN buildgroup AS g ON (g.id=b2g.groupid)
+            LEFT JOIN buildgroupposition AS gp ON (gp.buildgroupid=g.id)
+            LEFT JOIN site AS s ON (s.id=b.siteid)
+            LEFT JOIN buildupdate AS bu ON (b.updateid=bu.id)
+            LEFT JOIN coveragesummary AS cs ON (cs.buildid=b.id)
+            LEFT JOIN dynamicanalysissummary AS das ON (das.buildid=b.id)
+            LEFT JOIN builderrordiff AS be_diff ON (be_diff.buildid=b.id AND be_diff.type=0)
+            LEFT JOIN builderrordiff AS bw_diff ON (bw_diff.buildid=b.id AND bw_diff.type=1)
+            LEFT JOIN configureerrordiff AS ce_diff ON (ce_diff.buildid=b.id AND ce_diff.type=1)
+            LEFT JOIN buildtesttime AS btt ON (btt.buildid=b.id)
+            LEFT JOIN testdiff AS tnotrun_diff ON (tnotrun_diff.buildid=b.id AND tnotrun_diff.type=0)
+            LEFT JOIN testdiff AS tfailed_diff ON (tfailed_diff.buildid=b.id AND tfailed_diff.type=1)
+            LEFT JOIN testdiff AS tpassed_diff ON (tpassed_diff.buildid=b.id AND tpassed_diff.type=2)
+            LEFT JOIN testdiff AS tstatusfailed_diff ON (tstatusfailed_diff.buildid=b.id AND tstatusfailed_diff.type=3)
+            LEFT JOIN subproject as sp ON (b.subprojectid = sp.id)
+        ';
     }
 
     // Encapsulate this monster query so that it is not duplicated between
     // index.php and get_dynamic_builds.
     public function getIndexQuery(): string
     {
-        return
-            'SELECT b.id,b.siteid,b.parentid,b.done,b.changeid,b.testduration,
-            bu.status AS updatestatus,
-            b.osname AS osname,
-            bu.starttime AS updatestarttime,
-            bu.endtime AS updateendtime,
-            bu.nfiles AS countupdatefiles,
-            bu.warnings AS countupdatewarnings,
-            bu.revision,
-            b.configureduration,
-            be_diff.difference_positive AS countbuilderrordiffp,
-            be_diff.difference_negative AS countbuilderrordiffn,
-            bw_diff.difference_positive AS countbuildwarningdiffp,
-            bw_diff.difference_negative AS countbuildwarningdiffn,
-            ce_diff.difference AS countconfigurewarningdiff,
-            btt.time AS testtime,
-            tnotrun_diff.difference_positive AS counttestsnotrundiffp,
-            tnotrun_diff.difference_negative AS counttestsnotrundiffn,
-            tfailed_diff.difference_positive AS counttestsfaileddiffp,
-            tfailed_diff.difference_negative AS counttestsfaileddiffn,
-            tpassed_diff.difference_positive AS counttestspasseddiffp,
-            tpassed_diff.difference_negative AS counttestspasseddiffn,
-            tstatusfailed_diff.difference_positive AS countteststimestatusfaileddiffp,
-            tstatusfailed_diff.difference_negative AS countteststimestatusfaileddiffn,
-            (SELECT count(buildid) FROM build2note WHERE buildid=b.id)  AS countnotes,
-            (SELECT count(buildid) FROM comments WHERE buildid=b.id) AS countcomments,
-            s.name AS sitename,
-            s.outoforder AS siteoutoforder,
-            b.stamp,b.name,b.type,b.generator,b.starttime,b.endtime,b.submittime,
-            b.configureerrors AS countconfigureerrors,
-            b.configurewarnings AS countconfigurewarnings,
-            b.builderrors AS countbuilderrors,
-            b.buildwarnings AS countbuildwarnings,
-            b.buildduration,
-            b.testnotrun AS counttestsnotrun,
-            b.testfailed AS counttestsfailed,
-            b.testpassed AS counttestspassed,
-            b.testtimestatusfailed AS countteststimestatusfailed,
-            cs.loctested, cs.locuntested,
-            cs.loctesteddiff,
-            cs.locuntesteddiff,
-            das.checker, das.numdefects,
-            sp.id AS subprojectid,
-            sp.groupid AS subprojectgroup,
-            sp.position AS subprojectposition,
-            g.name AS groupname,gp.position,g.id AS groupid,
-            (SELECT count(buildid) FROM label2build WHERE buildid=b.id) AS numlabels,
-            (SELECT count(buildid) FROM build2uploadfile WHERE buildid=b.id) AS builduploadfiles
-                FROM build AS b
-                LEFT JOIN build2group AS b2g ON (b2g.buildid=b.id)
-                LEFT JOIN buildgroup AS g ON (g.id=b2g.groupid)
-                LEFT JOIN buildgroupposition AS gp ON (gp.buildgroupid=g.id)
-                LEFT JOIN site AS s ON (s.id=b.siteid)
-                LEFT JOIN buildupdate AS bu ON (b.updateid=bu.id)
-                LEFT JOIN coveragesummary AS cs ON (cs.buildid=b.id)
-                LEFT JOIN dynamicanalysissummary AS das ON (das.buildid=b.id)
-                LEFT JOIN builderrordiff AS be_diff ON (be_diff.buildid=b.id AND be_diff.type=0)
-                LEFT JOIN builderrordiff AS bw_diff ON (bw_diff.buildid=b.id AND bw_diff.type=1)
-                LEFT JOIN configureerrordiff AS ce_diff ON (ce_diff.buildid=b.id AND ce_diff.type=1)
-                LEFT JOIN buildtesttime AS btt ON (btt.buildid=b.id)
-                LEFT JOIN testdiff AS tnotrun_diff ON (tnotrun_diff.buildid=b.id AND tnotrun_diff.type=0)
-                LEFT JOIN testdiff AS tfailed_diff ON (tfailed_diff.buildid=b.id AND tfailed_diff.type=1)
-                LEFT JOIN testdiff AS tpassed_diff ON (tpassed_diff.buildid=b.id AND tpassed_diff.type=2)
-                LEFT JOIN testdiff AS tstatusfailed_diff ON (tstatusfailed_diff.buildid=b.id AND tstatusfailed_diff.type=3)
-                LEFT JOIN subproject as sp ON (b.subprojectid = sp.id)';
+        return $this->getIndexSelect() . $this->getIndexJoin();
     }
 
     public function populateBuildRow(array $build_row): array
